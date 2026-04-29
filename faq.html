@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAQ — NY Créations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #08080a;
+      --red: #e8120a;
+      --red-glow: rgba(232,18,10,0.35);
+      --card: #131318;
+      --card-border: rgba(232,18,10,0.12);
+      --text: #f0f0f0;
+      --muted: #888;
+      --nav-h: 72px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 128px 128px;
+    }
+
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .grid-bg::before {
+      content: '';
+      position: absolute;
+      inset: -100%;
+      background-image:
+        linear-gradient(rgba(232,18,10,0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,18,10,0.055) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridMove 18s linear infinite;
+    }
+    @keyframes gridMove {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(60px); }
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-tl {
+      width: 400px; height: 400px;
+      top: -160px; left: -160px;
+      background: radial-gradient(circle, rgba(232,18,10,0.2), transparent 70%);
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      background: rgba(8,8,10,0.55);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(232,18,10,0.1);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+    .nav-logo img {
+      height: 38px;
+      object-fit: contain;
+    }
+    .back-btn {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s;
+    }
+    .back-btn:hover { color: var(--text); }
+    .back-btn svg { width: 16px; height: 16px; }
+
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: calc(var(--nav-h) + 70px) 40px 100px;
+    }
+
+    .page-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 14px;
+    }
+    .page-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      line-height: 0.95;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .page-title span { color: var(--red); }
+    .divider {
+      width: 60px; height: 2px;
+      background: var(--red);
+      box-shadow: 0 0 10px var(--red);
+      margin-bottom: 50px;
+    }
+    .page-intro {
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 56px;
+    }
+
+    /* FAQ ACCORDION */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .faq-item {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    .faq-item.open {
+      border-color: rgba(232,18,10,0.3);
+      box-shadow: 0 8px 30px rgba(232,18,10,0.08);
+    }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 24px 28px;
+      text-align: left;
+    }
+    .faq-question-text {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .faq-emoji {
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+    .faq-icon {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 1px solid rgba(232,18,10,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.25s, transform 0.3s;
+    }
+    .faq-icon svg {
+      width: 12px; height: 12px;
+      stroke: var(--red);
+      transition: transform 0.3s;
+    }
+    .faq-item.open .faq-icon {
+      background: var(--red);
+    }
+    .faq-item.open .faq-icon svg {
+      stroke: #fff;
+      transform: rotate(45deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+      padding: 0 28px;
+    }
+    .faq-item.open .faq-answer {
+      max-height: 200px;
+      padding: 0 28px 24px;
+    }
+    .faq-answer p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.8;
+      border-left: 2px solid var(--red);
+      padding-left: 16px;
+    }
+
+    /* CTA bottom */
+    .faq-cta {
+      margin-top: 56px;
+      background: linear-gradient(135deg, rgba(232,18,10,0.1), rgba(232,18,10,0.03));
+      border: 1px solid rgba(232,18,10,0.2);
+      border-radius: 10px;
+      padding: 44px 40px;
+      text-align: center;
+    }
+    .faq-cta h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .faq-cta p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: 28px;
+      line-height: 1.7;
+    }
+    .btn-primary {
+      display: inline-block;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #fff;
+      background: var(--red);
+      padding: 16px 40px;
+      border-radius: 4px;
+      box-shadow: 0 0 30px var(--red-glow);
+      transition: box-shadow 0.25s, transform 0.2s;
+    }
+    .btn-primary:hover {
+      box-shadow: 0 0 50px var(--red);
+      transform: translateY(-2px);
+    }
+
+    /* Reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+  <div class="grid-bg"></div>
+  <div class="orb orb-tl"></div>
+
+  <nav>
+    <a class="nav-logo" href="index.html">
+      <img src="images/logonago.png" alt="NY Créations" />
+    </a>
+    <a class="back-btn" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M5 12l7-7M5 12l7 7"/>
+      </svg>
+      Retour au site
+    </a>
+  </nav>
+
+  <div class="page-wrapper">
+    <p class="page-label reveal">Vous avez des questions ?</p>
+    <h1 class="page-title reveal">F<span>A</span>Q</h1>
+    <div class="divider reveal"></div>
+    <p class="page-intro reveal">Tout ce que vous avez besoin de savoir avant de passer commande. Une question qui manque ? Contactez-nous directement.</p>
+
+    <div class="faq-list">
+
+      <div class="faq-item reveal">
+        <button class="faq-question" onclick="toggle(this)">
+          <span class="faq-question-text">
+            <span class="faq-emoji">🎨</span>
+            Quels services proposez-vous ?
+          </span>
+          <span class="faq-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <p>Nous réalisons des mappings personnalisés, des véhicules moddés ainsi que des projets sur mesure selon vos besoins. Chaque création est pensée pour s'intégrer parfaitement à votre univers.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-question" onclick="toggle(this)">
+          <span class="faq-question-text">
+            <span class="faq-emoji">📩</span>
+            Comment passer commande ?
+          </span>
+          <span class="faq-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <p>Il vous suffit de nous contacter via Discord en expliquant votre projet — style souhaité, détails, contexte. On vous répond rapidement pour lancer la discussion.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-question" onclick="toggle(this)">
+          <span class="faq-question-text">
+            <span class="faq-emoji">✏️</span>
+            Les créations sont-elles personnalisées ?
+          </span>
+          <span class="faq-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <p>Oui, chaque projet est entièrement adapté à votre demande : style, ambiance, détails, cohérence visuelle... Rien n'est générique chez nous.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-question" onclick="toggle(this)">
+          <span class="faq-question-text">
+            <span class="faq-emoji">⏱️</span>
+            Quels sont les délais ?
+          </span>
+          <span class="faq-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <p>Les délais varient selon la complexité du projet. Une estimation précise vous sera communiquée après discussion, avant toute validation de commande.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-question" onclick="toggle(this)">
+          <span class="faq-question-text">
+            <span class="faq-emoji">💳</span>
+            Quels sont les moyens de paiement ?
+          </span>
+          <span class="faq-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <p>Paiement via PayPal ou autre moyen selon accord, sécurisé et simple. Les modalités sont définies avec vous avant la commande.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-question" onclick="toggle(this)">
+          <span class="faq-question-text">
+            <span class="faq-emoji">🔧</span>
+            Puis-je demander des modifications ?
+          </span>
+          <span class="faq-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <p>Oui, des ajustements sont possibles selon l'avancement du projet. On travaille avec vous pour que le résultat soit exactement à la hauteur de vos attentes.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-question" onclick="toggle(this)">
+          <span class="faq-question-text">
+            <span class="faq-emoji">🌐</span>
+            Travaillez-vous avec tous les serveurs ?
+          </span>
+          <span class="faq-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <p>Oui, tant que votre serveur respecte les règles de la plateforme FiveM et de Rockstar Games. Consultez nos CGU pour plus de détails sur les restrictions d'utilisation.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="faq-cta reveal">
+      <h3>Une autre question ? 💬</h3>
+      <p>Notre équipe est disponible sur Discord pour répondre à toutes vos questions.</p>
+      <a class="btn-primary" href="index.html#support">Nous contacter</a>
+    </div>
+  </div>
+
+  <script>
+    function toggle(btn) {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    }
+
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

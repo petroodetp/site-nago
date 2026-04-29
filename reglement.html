@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Règlement & CGU — NY Créations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #08080a;
+      --red: #e8120a;
+      --red-glow: rgba(232,18,10,0.35);
+      --card: #131318;
+      --card-border: rgba(232,18,10,0.12);
+      --text: #f0f0f0;
+      --muted: #888;
+      --nav-h: 72px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 128px 128px;
+    }
+
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .grid-bg::before {
+      content: '';
+      position: absolute;
+      inset: -100%;
+      background-image:
+        linear-gradient(rgba(232,18,10,0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,18,10,0.055) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridMove 18s linear infinite;
+    }
+    @keyframes gridMove {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(60px); }
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-tl {
+      width: 400px; height: 400px;
+      top: -160px; left: -160px;
+      background: radial-gradient(circle, rgba(232,18,10,0.2), transparent 70%);
+    }
+
+    /* ─── NAVBAR ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      background: rgba(8,8,10,0.55);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(232,18,10,0.1);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .nav-logo img {
+      height: 38px;
+      object-fit: contain;
+    }
+    .back-btn {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s;
+    }
+    .back-btn:hover { color: var(--text); }
+    .back-btn svg { width: 16px; height: 16px; }
+
+    /* ─── PAGE CONTENT ─── */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: calc(var(--nav-h) + 70px) 40px 100px;
+    }
+
+    .page-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 14px;
+    }
+    .page-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      line-height: 0.95;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .page-title span { color: var(--red); }
+    .divider {
+      width: 60px; height: 2px;
+      background: var(--red);
+      box-shadow: 0 0 10px var(--red);
+      margin-bottom: 50px;
+    }
+    .update-date {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 60px;
+    }
+
+    /* CGU CONTENT STYLES */
+    .cgu {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 56px 56px;
+    }
+
+    .cgu h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.9rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin: 48px 0 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .cgu h2:first-child { margin-top: 0; }
+
+    .cgu h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin: 32px 0 12px;
+    }
+
+    .cgu p {
+      font-size: 0.95rem;
+      color: rgba(240,240,240,0.8);
+      line-height: 1.85;
+      margin-bottom: 14px;
+    }
+
+    .cgu ul {
+      list-style: none;
+      margin: 12px 0 20px;
+      padding: 0;
+    }
+    .cgu ul li {
+      font-size: 0.95rem;
+      color: rgba(240,240,240,0.75);
+      line-height: 1.8;
+      padding: 6px 0 6px 22px;
+      position: relative;
+    }
+    .cgu ul li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--red);
+    }
+
+    .cgu .warn-box {
+      background: rgba(232,18,10,0.08);
+      border: 1px solid rgba(232,18,10,0.25);
+      border-left: 3px solid var(--red);
+      border-radius: 6px;
+      padding: 20px 24px;
+      margin: 24px 0;
+    }
+    .cgu .warn-box p {
+      color: rgba(240,240,240,0.9);
+      margin: 0;
+      font-weight: 500;
+    }
+
+    .cgu .forbidden {
+      background: rgba(232,18,10,0.05);
+      border: 1px solid rgba(232,18,10,0.15);
+      border-radius: 6px;
+      padding: 18px 24px;
+      margin: 12px 0;
+    }
+    .cgu .forbidden h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .cgu .final-clause {
+      background: linear-gradient(135deg, rgba(232,18,10,0.12), rgba(232,18,10,0.04));
+      border: 1px solid rgba(232,18,10,0.3);
+      border-radius: 8px;
+      padding: 32px 36px;
+      margin-top: 48px;
+      text-align: center;
+    }
+    .cgu .final-clause h3 {
+      font-size: 1.1rem;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+    .cgu .final-clause ul { display: inline-block; text-align: left; }
+  </style>
+</head>
+<body>
+
+  <div class="grid-bg"></div>
+  <div class="orb orb-tl"></div>
+
+  <nav>
+    <a class="nav-logo" href="index.html">
+      <img src="images/logonago.png" alt="NY Créations" />
+    </a>
+    <a class="back-btn" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M5 12l7-7M5 12l7 7"/>
+      </svg>
+      Retour au site
+    </a>
+  </nav>
+
+  <div class="page-wrapper">
+    <p class="page-label">Documents légaux</p>
+    <h1 class="page-title">Règlement <span>&</span> CGU</h1>
+    <div class="divider"></div>
+    <p class="update-date">Dernière mise à jour : 15 avril 2026</p>
+
+    <div class="cgu">
+
+      <h2>1. Identification</h2>
+      <p>Le présent site (ci-après "NY Créations") propose à la vente des contenus numériques, notamment des mappings de véhicules et éléments graphiques destinés à une utilisation exclusive ou étendue selon leur nature.</p>
+      <p>Toute personne procédant à un achat (ci-après "le Client") reconnaît avoir pris connaissance et accepté sans réserve les présentes CGV/CGU.</p>
+
+      <h2>2. Objet</h2>
+      <p>Les présentes conditions ont pour objet de définir :</p>
+      <ul>
+        <li>les modalités de vente des produits numériques,</li>
+        <li>les droits et obligations des parties,</li>
+        <li>les restrictions d'utilisation des contenus selon leur catégorie.</li>
+      </ul>
+
+      <h2>3. Nature des produits</h2>
+      <p>Les produits vendus sont des contenus numériques comprenant :</p>
+      <ul>
+        <li>mappings de véhicules,</li>
+        <li>textures, designs et modifications,</li>
+        <li>contenus exclusifs liés à Skyland RP,</li>
+        <li>contenus utilisables sur serveurs tiers.</li>
+      </ul>
+      <p>Ces produits sont livrés sous forme de fichiers téléchargeables.</p>
+
+      <h2>4. Licence d'utilisation</h2>
+      <p>L'achat d'un produit confère au Client une licence d'utilisation strictement limitée, personnelle, non exclusive, non transférable et révocable.</p>
+
+      <h3>4.1 — Contenus identifiés "SkylandRP" (EXCLUSIFS)</h3>
+      <p>Tout produit comportant la mention, le marquage, ou tout élément visuel "SkylandRP" est considéré comme exclusif à Skyland RP.</p>
+      <div class="forbidden">
+        <h3>⛔ Il est strictement interdit de :</h3>
+        <ul>
+          <li>utiliser ces contenus sur un autre serveur FiveM,</li>
+          <li>transférer les fichiers à un tiers,</li>
+          <li>revendre, partager ou distribuer,</li>
+          <li>modifier dans un but d'exploitation externe,</li>
+          <li>retirer ou masquer le marquage "SkylandRP".</li>
+        </ul>
+      </div>
+
+      <h3>4.2 — Contenus SANS marquage "SkylandRP" (UTILISATION ÉTENDUE)</h3>
+      <p>Tout produit ne comportant aucune mention ou signature "SkylandRP" peut être utilisé sur d'autres serveurs FiveM, publics ou privés, dans un cadre personnel ou serveur.</p>
+      <div class="forbidden">
+        <h3>⛔ Il reste cependant interdit de :</h3>
+        <ul>
+          <li>revendre les fichiers,</li>
+          <li>les redistribuer gratuitement ou payamment,</li>
+          <li>revendiquer la création,</li>
+          <li>partager les fichiers bruts à des tiers.</li>
+        </ul>
+      </div>
+
+      <div class="warn-box">
+        <p>⚠️ La distinction entre contenu exclusif et contenu librement exploitable repose uniquement sur la présence du marquage "SkylandRP". Toute tentative de suppression ou contournement de ce marquage sera considérée comme une violation grave.</p>
+      </div>
+
+      <h2>5. Propriété intellectuelle</h2>
+      <p>L'ensemble des produits restent la propriété exclusive du créateur. Aucun transfert de propriété n'est effectué. Toute utilisation non conforme expose le Client à des poursuites judiciaires, sanctions civiles et pénales, et demandes de dommages et intérêts.</p>
+
+      <h2>6. Conformité aux règles FiveM et Rockstar</h2>
+      <p>Les produits sont destinés à être utilisés avec FiveM sur Grand Theft Auto V. Le Client s'engage à respecter les conditions d'utilisation de FiveM et de Rockstar Games, et à ne pas utiliser les produits dans un cadre illégal ou non conforme.</p>
+      <ul>
+        <li>utilisation sur un serveur ne respectant pas les règles officielles,</li>
+        <li>exploitation commerciale non autorisée,</li>
+        <li>usage pouvant entraîner sanctions ou bannissements.</li>
+      </ul>
+      <p>Le vendeur décline toute responsabilité en cas de sanction.</p>
+
+      <h2>7. Commande et paiement</h2>
+      <p>Les commandes sont validées après paiement complet. Le vendeur se réserve le droit de refuser toute commande en cas de fraude, d'abus, ou de non-respect des conditions.</p>
+
+      <h2>8. Livraison</h2>
+      <p>Les produits sont livrés par téléchargement ou via email / Discord. La livraison est considérée comme effectuée dès réception du fichier.</p>
+
+      <h2>9. Absence de droit de rétractation</h2>
+      <p>Le Client renonce à son droit de rétractation pour tout contenu numérique livré. Aucun remboursement sauf en cas de produit défectueux ou d'erreur majeure.</p>
+
+      <h2>10. Responsabilité</h2>
+      <p>Le vendeur ne saurait être tenu responsable des problèmes techniques, d'une mauvaise installation, d'un usage non conforme, ou de sanctions liées à FiveM ou Rockstar Games.</p>
+
+      <h2>11. Contrôle et sanctions</h2>
+      <p>Le vendeur se réserve le droit de tracer les fichiers et de vérifier leur utilisation. En cas de violation : révocation de licence, bannissement, suppression des accès, poursuites judiciaires et dommages et intérêts.</p>
+
+      <h2>12. Données personnelles</h2>
+      <p>Les données collectées sont utilisées uniquement pour la gestion des commandes, le support client et la sécurité. Aucune revente des données n'est effectuée.</p>
+
+      <h2>13. Modification</h2>
+      <p>Les présentes conditions peuvent être modifiées à tout moment. La date de mise à jour est indiquée en haut de ce document.</p>
+
+      <h2>14. Droit applicable</h2>
+      <p>Les présentes conditions sont soumises au droit applicable du pays du vendeur.</p>
+
+      <h2>15. Acceptation</h2>
+      <p>Toute commande implique l'acceptation complète des présentes CGV/CGU, des restrictions liées au marquage "SkylandRP", ainsi que des règles FiveM et Rockstar.</p>
+
+      <div class="final-clause">
+        <h3>⚠️ Clause Finale Importante</h3>
+        <ul>
+          <li>Les contenus "SkylandRP" = usage <strong>STRICTEMENT</strong> Skyland RP</li>
+          <li>Les contenus sans marquage = utilisables ailleurs <strong>MAIS non revendables</strong></li>
+          <li>Toute violation (leak, revente, détournement, suppression de marquage) entraîne des sanctions immédiates et des poursuites systématiques.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

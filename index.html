@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NY Créations — Mapping FiveM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #08080a;
+      --red: #e8120a;
+      --red-dim: rgba(232,18,10,0.15);
+      --red-glow: rgba(232,18,10,0.35);
+      --card: #131318;
+      --card-border: rgba(232,18,10,0.12);
+      --text: #f0f0f0;
+      --muted: #888;
+      --nav-h: 72px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* ─── GRAIN OVERLAY ─── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 128px 128px;
+    }
+
+    /* ─── ANIMATED GRID BACKGROUND ─── */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .grid-bg::before {
+      content: '';
+      position: absolute;
+      inset: -100%;
+      background-image:
+        linear-gradient(rgba(232,18,10,0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,18,10,0.07) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridMove 18s linear infinite;
+    }
+    @keyframes gridMove {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(60px); }
+    }
+
+    /* ─── RED ORBS ─── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      animation: orbPulse 6s ease-in-out infinite;
+    }
+    .orb-tl {
+      width: 500px; height: 500px;
+      top: -180px; left: -180px;
+      background: radial-gradient(circle, rgba(232,18,10,0.28), transparent 70%);
+      animation-delay: 0s;
+    }
+    .orb-br {
+      width: 600px; height: 600px;
+      bottom: -200px; right: -200px;
+      background: radial-gradient(circle, rgba(232,18,10,0.22), transparent 70%);
+      animation-delay: 3s;
+    }
+    @keyframes orbPulse {
+      0%,100% { opacity: 0.6; transform: scale(1); }
+      50%      { opacity: 1;   transform: scale(1.12); }
+    }
+
+    /* ─── NAVBAR ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      background: rgba(8,8,10,0.55);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(232,18,10,0.1);
+    }
+    .nav-logo img {
+      height: 40px;
+      object-fit: contain;
+      filter: brightness(1.1);
+      display: block;
+    }
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: var(--red);
+      transition: width 0.25s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.btn-red {
+      color: var(--text);
+      background: var(--red);
+      padding: 8px 18px;
+      border-radius: 4px;
+      box-shadow: 0 0 18px var(--red-glow);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .nav-links a.btn-red::after { display: none; }
+    .nav-links a.btn-red:hover {
+      box-shadow: 0 0 32px var(--red);
+      transform: translateY(-1px);
+    }
+
+    /* ─── MAIN LAYOUT ─── */
+    main {
+      position: relative;
+      z-index: 1;
+    }
+    section {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: calc(var(--nav-h) + 40px) 24px 80px;
+    }
+    .hero-logo {
+      width: min(260px, 60vw);
+      margin-bottom: 36px;
+      filter: drop-shadow(0 0 40px var(--red-glow));
+      animation: heroFloat 4s ease-in-out infinite;
+    }
+    @keyframes heroFloat {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-10px); }
+    }
+    .hero-tag {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 16px;
+    }
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 10vw, 9rem);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero-title span { color: var(--red); }
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 44px;
+    }
+    .btn-primary {
+      display: inline-block;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #fff;
+      background: var(--red);
+      padding: 16px 40px;
+      border-radius: 4px;
+      box-shadow: 0 0 30px var(--red-glow);
+      transition: box-shadow 0.25s, transform 0.2s;
+    }
+    .btn-primary:hover {
+      box-shadow: 0 0 50px var(--red);
+      transform: translateY(-2px);
+    }
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0.4;
+      animation: scrollBounce 2s ease-in-out infinite;
+    }
+    .scroll-hint span {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .scroll-hint svg { width: 18px; height: 18px; }
+    @keyframes scrollBounce {
+      0%,100% { transform: translateX(-50%) translateY(0); }
+      50%      { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ─── SECTION COMMONS ─── */
+    .section-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 100px 40px;
+    }
+    .section-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 6vw, 5.5rem);
+      line-height: 0.95;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .section-desc {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.75;
+      margin-bottom: 60px;
+    }
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: var(--red);
+      margin: 20px 0 40px;
+      box-shadow: 0 0 10px var(--red);
+    }
+
+    /* ─── BOUTIQUE ─── */
+    #boutique { padding-top: var(--nav-h); }
+    .boutique-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+    .boutique-card {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      aspect-ratio: 1 / 1;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+      cursor: pointer;
+    }
+    .boutique-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(232,18,10,0.5), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 1;
+    }
+    .boutique-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(232,18,10,0.22);
+      border-color: rgba(232,18,10,0.4);
+    }
+    .boutique-card:hover::before { opacity: 1; }
+    .boutique-card img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s;
+    }
+    .boutique-card:hover img { transform: scale(1.05); }
+    .boutique-cta {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 36px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .boutique-cta p {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--muted);
+      max-width: 600px;
+    }
+    .boutique-cta p strong { color: var(--text); }
+
+    /* ─── EQUIPE ─── */
+    #equipe { background: rgba(19,19,24,0.4); }
+    .equipe-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 28px;
+    }
+    .membre-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 44px 36px;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .membre-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 120px; height: 2px;
+      background: var(--red);
+      box-shadow: 0 0 20px var(--red);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .membre-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(232,18,10,0.15);
+      border-color: rgba(232,18,10,0.3);
+    }
+    .membre-card:hover::before { opacity: 1; }
+    .membre-avatar {
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--red), #8b0000);
+      margin: 0 auto 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: 0.05em;
+      box-shadow: 0 0 30px rgba(232,18,10,0.35);
+    }
+    .membre-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.4rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .membre-role {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 20px;
+    }
+    .membre-desc {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    /* ─── SUPPORT ─── */
+    #support { padding-top: var(--nav-h); }
+    .support-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .discord-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 44px 36px;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    }
+    .discord-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 50px rgba(232,18,10,0.15);
+      border-color: rgba(232,18,10,0.3);
+    }
+    .discord-icon {
+      width: 64px; height: 64px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #5865F2, #404EED);
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .discord-icon svg { width: 34px; height: 34px; fill: #fff; }
+    .discord-card h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .discord-card p {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .btn-discord {
+      display: inline-block;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #fff;
+      background: #5865F2;
+      padding: 14px 30px;
+      border-radius: 6px;
+      transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(88,101,242,0.3);
+    }
+    .btn-discord:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(88,101,242,0.45);
+    }
+
+    /* ─── CTA BANNER ─── */
+    .cta-banner {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #c20d06 0%, #8b0000 60%, #3d0000 100%);
+      padding: 90px 40px;
+      text-align: center;
+    }
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .cta-banner .section-inner {
+      position: relative;
+      z-index: 1;
+      padding: 0 40px;
+    }
+    .cta-banner h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 18px;
+    }
+    .cta-banner p {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 40px;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: rgba(8,8,10,0.95);
+      border-top: 1px solid rgba(232,18,10,0.08);
+      padding: 36px 40px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    footer p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    footer a {
+      color: var(--red);
+      text-decoration: none;
+    }
+    footer a:hover { text-decoration: underline; }
+
+    /* ─── SCROLL REVEAL ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-d1 { transition-delay: 0.1s; }
+    .reveal-d2 { transition-delay: 0.2s; }
+    .reveal-d3 { transition-delay: 0.3s; }
+    .reveal-d4 { transition-delay: 0.4s; }
+  </style>
+</head>
+<body>
+
+  <div class="grid-bg"></div>
+  <div class="orb orb-tl"></div>
+  <div class="orb orb-br"></div>
+
+  <!-- NAVBAR -->
+  <nav>
+    <a class="nav-logo" href="#hero">
+      <img src="images/logonago.png" alt="NY Créations" />
+    </a>
+    <ul class="nav-links">
+      <li><a href="#boutique">Boutique</a></li>
+      <li><a href="#equipe">L'équipe</a></li>
+      <li><a href="#support">Support</a></li>
+      <li><a href="reglement.html" class="btn-red">Règlement & CGU</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- HERO -->
+    <section id="hero">
+      <img class="hero-logo" src="images/logonago.png" alt="NY Créations Logo" />
+      <p class="hero-tag">Mapping FiveM de qualité</p>
+      <h1 class="hero-title">NY<br><span>Créations</span></h1>
+      <p class="hero-sub">Des mappings uniques, des véhicules sur-mesure et une passion sans limite pour le détail. Nago &amp; YaYa à votre service.</p>
+      <a class="btn-primary" href="#boutique">Voir nos créations</a>
+      <div class="scroll-hint">
+        <span>Scroll</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M5 12l7 7 7-7"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- BOUTIQUE -->
+    <section id="boutique">
+      <div class="section-inner">
+        <p class="section-label reveal">Nos Réalisations</p>
+        <h2 class="section-title reveal reveal-d1">Boutique</h2>
+        <div class="divider reveal reveal-d2"></div>
+        <p class="section-desc reveal reveal-d2">Découvrez nos créations : mappings immersifs, véhicules personnalisés et designs exclusifs pensés pour le jeu de rôle FiveM.</p>
+
+        <div class="boutique-grid">
+          <div class="boutique-card reveal reveal-d1">
+            <img src="images/commico.png" alt="Création Commico" />
+          </div>
+          <div class="boutique-card reveal reveal-d2">
+            <img src="images/félix.png" alt="Création Félix" />
+          </div>
+          <div class="boutique-card reveal reveal-d3">
+            <img src="images/lagavotte.png" alt="Création Lagavotte" />
+          </div>
+          <div class="boutique-card reveal reveal-d4">
+            <img src="images/lemailles.png" alt="Création Lemailles" />
+          </div>
+          <div class="boutique-card reveal reveal-d4">
+            <img src="images/véhicules.png" alt="Nos Véhicules" />
+          </div>
+        </div>
+
+        <div class="boutique-cta reveal">
+          <p><strong>Besoin d'un mapping personnalisé, d'un véhicule unique ou d'un projet sur mesure ?</strong><br />
+          Contacte-nous dès maintenant.</p>
+          <a class="btn-primary" href="#support">Nous contacter</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- EQUIPE -->
+    <section id="equipe">
+      <div class="section-inner">
+        <p class="section-label reveal">Qui sommes-nous ?</p>
+        <h2 class="section-title reveal reveal-d1">L'Équipe</h2>
+        <div class="divider reveal reveal-d2"></div>
+        <p class="section-desc reveal reveal-d2">Deux passionnés, un objectif : des créations de qualité qui sortent du lot.</p>
+
+        <div class="equipe-grid">
+          <div class="membre-card reveal reveal-d2">
+            <div class="membre-avatar">N</div>
+            <h3 class="membre-name">Nago</h3>
+            <p class="membre-role">Mappeur · Co-fondateur</p>
+            <p class="membre-desc">Un dev en or, motivé et passionné. Nago apporte précision et créativité à chaque projet, avec un souci du détail qui fait toute la différence.</p>
+          </div>
+          <div class="membre-card reveal reveal-d3">
+            <div class="membre-avatar">Y</div>
+            <h3 class="membre-name">YaYa</h3>
+            <p class="membre-role">Mappeur · Co-fondateur</p>
+            <p class="membre-desc">Un dev en or, motivé et passionné. YaYa transforme chaque idée en réalité avec un talent inné pour le mapping immersif et les finitions impeccables.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA BANNER -->
+    <div class="cta-banner">
+      <div class="section-inner">
+        <h2>Prêt à passer commande ?</h2>
+        <p>Rejoins nos Discords et décris-nous ton projet. On s'occupe du reste.</p>
+        <a class="btn-primary" href="#support" style="background:#fff;color:#c20d06;box-shadow:0 0 30px rgba(255,255,255,0.2);">Contacter l'équipe</a>
+      </div>
+    </div>
+
+    <!-- SUPPORT -->
+    <section id="support">
+      <div class="section-inner">
+        <p class="section-label reveal">On est là</p>
+        <h2 class="section-title reveal reveal-d1">Support</h2>
+        <div class="divider reveal reveal-d2"></div>
+        <p class="section-desc reveal reveal-d2">Une question, une commande, un projet ? Rejoins le Discord de ton choix et on revient vers toi rapidement.</p>
+
+        <div class="support-grid">
+          <div class="discord-card reveal reveal-d2">
+            <div class="discord-icon">
+              <svg viewBox="0 0 71 55" xmlns="http://www.w3.org/2000/svg"><path d="M60.1 4.9A58.5 58.5 0 0 0 45.5.4a40.5 40.5 0 0 0-1.8 3.7 54.2 54.2 0 0 0-16.4 0A40.8 40.8 0 0 0 25.5.4 58.3 58.3 0 0 0 10.9 5C1.6 18.6-1 31.9.3 45c5.9 4.4 11.7 7 17.3 8.7a43 43 0 0 0 3.7-6.1 38.2 38.2 0 0 1-5.9-2.8c.5-.4 1-.7 1.4-1.1a41.7 41.7 0 0 0 35.8 0c.5.4 1 .8 1.4 1.1a38.2 38.2 0 0 1-5.9 2.9 43 43 0 0 0 3.7 6c5.6-1.7 11.4-4.3 17.3-8.7 1.4-15.1-2.4-28.3-10-40.1ZM23.7 37c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2c3.6 0 6.5 3.2 6.4 7.2 0 4-2.8 7.2-6.4 7.2Zm23.6 0c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2c3.6 0 6.5 3.2 6.4 7.2 0 4-2.8 7.2-6.4 7.2Z"/></svg>
+            </div>
+            <h3>Discord Nago</h3>
+            <p>Rejoins le serveur de Nago pour discuter de tes projets et passer commande directement.</p>
+            <a class="btn-discord" href="https://discord.gg/KfHzucaeNf" target="_blank" rel="noopener">Rejoindre</a>
+          </div>
+          <div class="discord-card reveal reveal-d3">
+            <div class="discord-icon">
+              <svg viewBox="0 0 71 55" xmlns="http://www.w3.org/2000/svg"><path d="M60.1 4.9A58.5 58.5 0 0 0 45.5.4a40.5 40.5 0 0 0-1.8 3.7 54.2 54.2 0 0 0-16.4 0A40.8 40.8 0 0 0 25.5.4 58.3 58.3 0 0 0 10.9 5C1.6 18.6-1 31.9.3 45c5.9 4.4 11.7 7 17.3 8.7a43 43 0 0 0 3.7-6.1 38.2 38.2 0 0 1-5.9-2.8c.5-.4 1-.7 1.4-1.1a41.7 41.7 0 0 0 35.8 0c.5.4 1 .8 1.4 1.1a38.2 38.2 0 0 1-5.9 2.9 43 43 0 0 0 3.7 6c5.6-1.7 11.4-4.3 17.3-8.7 1.4-15.1-2.4-28.3-10-40.1ZM23.7 37c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2c3.6 0 6.5 3.2 6.4 7.2 0 4-2.8 7.2-6.4 7.2Zm23.6 0c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2c3.6 0 6.5 3.2 6.4 7.2 0 4-2.8 7.2-6.4 7.2Z"/></svg>
+            </div>
+            <h3>Discord YaYa</h3>
+            <p>Rejoins le serveur de YaYa pour discuter de tes projets et passer commande directement.</p>
+            <a class="btn-discord" href="https://discord.gg/NTJ5EvpQWD" target="_blank" rel="noopener">Rejoindre</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 NY Créations — Nago &amp; YaYa · Tous droits réservés · <a href="reglement.html">Règlement &amp; CGU</a></p>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Navbar active link highlight on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a:not(.btn-red)');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 120) current = s.id;
+      });
+      navLinks.forEach(a => {
+        a.style.color = a.getAttribute('href') === '#' + current ? 'var(--text)' : '';
+      });
+    }, { passive: true });
+  </script>
+</body>
+</html>
